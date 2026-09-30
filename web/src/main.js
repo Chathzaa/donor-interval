@@ -9,6 +9,10 @@ const ABI = [
   "function setBankAuthorization(address bank, bool authorized)",
   "function recordDonation(bytes32 donorKey)",
   "function getIntervalStatus(bytes32 donorKey) view returns (uint256 lastDonationAt, uint256 nextAllowedAt, uint256 donationCount, bool intervalClear)",
+  "error AdministratorOnly()",
+  "error BankOnly()",
+  "error IntervalNotMet(uint256 nextAllowedAt)",
+  "error BankAuthorizationUnchanged()",
   "event DonationRecorded(bytes32 indexed donorKey, address indexed bank, uint256 timestamp, uint256 donationNumber)"
 ];
 
@@ -36,7 +40,7 @@ function showToast(message, kind = "success") {
 }
 
 function explainError(error) {
-  const message = `${error?.shortMessage || error?.reason || error?.message || error}`;
+  const message = `${error?.revert?.name || error?.shortMessage || error?.reason || error?.message || error}`;
   if (message.includes("user rejected") || message.includes("User rejected")) return "Wallet request cancelled.";
   if (message.includes("BankOnly")) return "This wallet is not an authorized blood bank.";
   if (message.includes("AdministratorOnly")) return "Only the administrator can change bank access.";
