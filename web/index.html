@@ -3,13 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0c1624" />
-    <title>DonorInterval · Donation timing registry</title>
+    <meta name="theme-color" content="#f5f7fa" />
+    <title>DonorInterval | Donation record registry</title>
   </head>
   <body>
     <div class="shell">
       <header class="topbar">
-        <div class="brand"><span class="brand-mark">✚</span><span>DonorInterval</span></div>
+        <div class="brand"><span class="brand-mark">D</span><span>DonorInterval</span></div>
         <div class="top-actions">
           <span id="chain-state" class="chain-state">Local chain: checking</span>
           <button id="connect" class="button button-outline" type="button">Connect MetaMask</button>
@@ -18,22 +18,22 @@
 
       <main>
         <section class="hero">
-          <div class="eyebrow">BLOCKCHAIN + CYBER SECURITY · EC8204 PROTOTYPE</div>
-          <h1>One shared timeline.<br /><span>Safer donation scheduling.</span></h1>
-          <p>Participating blood banks can check the recorded interval before adding a donation. The registry uses fictional, pseudonymous donor codes and never stores names or blood groups.</p>
-          <div class="hero-chips"><span>Authorized bank writes</span><span>Auditable events</span><span>Public interval check</span></div>
+          <div class="eyebrow">EC8204 · BLOCKCHAIN AND CYBER SECURITY</div>
+          <h1>Blood donation interval registry</h1>
+          <p>A shared Ethereum record for authorized blood banks. The application checks the time since the last recorded donation for a fictional donor code.</p>
+          <div class="hero-chips"><span>Smart contract</span><span>Bank authorization</span><span>Transaction history</span></div>
         </section>
 
         <section class="metrics" aria-label="Project facts">
-          <div><strong>124 days</strong><span>Conservative demo interval</span></div>
-          <div><strong>2 roles</strong><span>Administrator &amp; banks</span></div>
-          <div><strong>0 identity fields</strong><span>Real donor data stays off-chain</span></div>
+          <div><strong>124 days</strong><span>Fixed interval used in this prototype</span></div>
+          <div><strong>2 roles</strong><span>Administrator and authorized banks</span></div>
+          <div><strong>Hashed codes</strong><span>No donor identity stored on-chain</span></div>
         </section>
 
         <section class="workspace">
           <div class="panel main-panel">
             <div class="panel-heading"><div><span class="step">01</span><h2>Check a donor code</h2></div><span class="tag">Anyone can read</span></div>
-            <p class="muted">Use a generated demonstration code. Keep real donor identifiers and medical details out of this app.</p>
+            <p class="muted">Use the generated code to check this registry. Do not enter real donor information.</p>
             <label for="donor-code">Fictional donor code</label>
             <div class="input-row"><input id="donor-code" type="text" spellcheck="false" placeholder="DNR- followed by 64 hexadecimal characters" /><button id="generate" class="button button-soft" type="button">Generate</button></div>
             <div class="input-row action-row"><button id="check" class="button button-primary" type="button">Check interval</button><button id="copy" class="button button-outline" type="button">Copy code</button></div>
@@ -43,7 +43,7 @@
 
           <div class="panel side-panel">
             <div class="panel-heading"><div><span class="step">02</span><h2>Record a donation</h2></div><span class="tag">Bank wallet</span></div>
-            <p class="muted">Only wallets authorized by the administrator can submit. The contract uses the blockchain timestamp and rejects an early second entry.</p>
+            <p class="muted">Only authorized bank wallets can submit a record. The contract rejects a second record before the interval ends.</p>
             <button id="record" class="button button-primary full" type="button">Record donation</button>
             <div class="divider"></div>
             <div class="panel-heading"><div><span class="step">03</span><h2>Manage a bank</h2></div><span class="tag">Administrator</span></div>
@@ -55,12 +55,12 @@
         </section>
 
         <section class="explain">
-          <div><h3>What this check means</h3><p>“Interval clear” means this chain has no recorded donation inside the demo waiting period. It does not mean a person is medically eligible to donate.</p></div>
-          <div><h3>Privacy boundary</h3><p>A random donor code is pseudonymous, not anonymous. If somebody learns the code, they can connect its public records. Never enter a real patient record here.</p></div>
+          <div><h3>Scope of the result</h3><p>The check covers records on this blockchain only. It does not determine medical eligibility to donate.</p></div>
+          <div><h3>Privacy limitation</h3><p>Records use a hash of a random code. Anyone who obtains that code can link its public records.</p></div>
         </section>
       </main>
 
-      <footer><span>EC8204 · Educational demonstration with invented records</span><span id="contract-address">Contract: waiting for deployment</span></footer>
+      <footer><span>EC8204 project prototype · Fictional records only</span><span id="contract-address">Contract: waiting for deployment</span></footer>
     </div>
     <div id="toast" class="toast" role="alert" aria-live="polite"></div>
     <script type="module" src="/src/main.js"></script>

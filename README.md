@@ -1,87 +1,65 @@
-# DonorInterval — start-to-submission guide
+# DonorInterval
 
-## 1. Install the prerequisites
+DonorInterval is a local Ethereum application for recording the time of a blood donation against a pseudonymous donor code. An authorized bank can submit a record. The contract rejects another record for the same code until a fixed interval has elapsed. The browser app shows the current interval status and transaction history.
 
-- A computer with Node.js **22.13.0 or later**, Chrome or Edge, and the [official MetaMask browser extension](https://support.metamask.io/start/getting-started-with-metamask/). After installation, click the browser's puzzle-piece icon and pin MetaMask so its fox icon stays visible.
-- Internet access the first time `npm install` and the Solidity compiler run.
-- PowerPoint or another editor that can export the presentation format ELMS accepts.
+This is a project prototype using fictional records. Its output is **not** a medical eligibility decision.
 
-In Windows PowerShell, use `npm.cmd` instead of `npm` if PowerShell blocks `npm.ps1`. Open PowerShell **in this `donor-interval` folder**. Check:
+## Design
+
+| Component | Responsibility |
+| --- | --- |
+| `DonorInterval.sol` | Stores the latest timestamp and count for each donor key; enforces authorization and the interval. |
+| Hardhat local node | Provides the development blockchain and test accounts. |
+| MetaMask | Signs bank transactions and selects the local chain. |
+| Browser app | Hashes a random donor code, reads contract status and events, and submits transactions. |
+
+The contract uses a fixed **124-day** interval as a conservative approximation of the four-month minimum stated by the Sri Lankan National Blood Transfusion Service. Calendar-month rules and clinical screening are outside this contract. Only a 32-byte code hash is submitted to the chain; names, blood groups, and screening details are not stored there.
+
+### Access rules
+
+- The deployer is the administrator and the first authorized bank.
+- Only the administrator can authorize or revoke another bank wallet.
+- Only authorized bank wallets can record donations.
+- Anyone with a donor code can read the status and its public event history.
+
+## Run locally
+
+Requirements: Node.js 22.13 or newer, Chrome or Edge, and the MetaMask browser extension.
 
 ```powershell
-node --version
-npm.cmd --version
 npm.cmd install
+npm.cmd run build:contracts
 ```
 
-Create a fresh MetaMask wallet for this class demo if you do not already have one. Keep its recovery phrase private and offline. The Hardhat accounts below are separate, public development keys; do not use them with real funds or other networks.
+Run the following in separate terminals from this directory:
 
-Do not use any real donor data, production wallet, real cryptocurrency, or real clinical decision with this prototype.
+| Terminal | Commands |
+| --- | --- |
+| A | `npm.cmd run chain` |
+| B | `npm.cmd run deploy` then `npm.cmd run sync` |
+| C | `npm.cmd run dev` |
 
-## 2. Verify the code
+Open `http://127.0.0.1:5173/`. Import Hardhat development accounts #0 and #1 into MetaMask, select account #0, and click **Connect MetaMask**. The app requests the local network (RPC `http://127.0.0.1:8545`, chain ID `31337`). Account #0 is the administrator; account #1 must be authorized by account #0 before it can write.
+
+The local blockchain is reset when terminal A stops. Run `deploy` and `sync` again after restarting it. Development private keys must not be used with real funds.
+
+## Tests
 
 ```powershell
-npm.cmd run build:contracts
 npm.cmd test
 npm.cmd run build:web
 ```
 
-Expected: the Solidity contract compiles, **8 tests pass**, and Vite creates `web/dist`. The tests cover a first record, shared interval enforcement across banks, a later valid record after simulated time, separate donors, role restrictions, and invalid inputs.
+The eight contract tests cover the first record, a second bank attempting an early record, a later accepted record after simulated time, separate donor histories, administrator permissions, revoked or unauthorized wallets, and invalid donor keys. `npm.cmd run smoke` is an optional check against a running local node; it writes a fictional record and authorizes account #1.
 
-## 3. Start the blockchain, deploy, and start the app
+## Limits
 
-Keep **three PowerShell windows** open in this folder:
+- The application can check only records submitted to this contract. It cannot find donations outside the participating banks or detect two different codes used for one person.
+- A hash of a random code is pseudonymous rather than anonymous. If someone obtains the code, they can link its public records.
+- A real deployment would need trusted identity matching, bank governance, privacy controls, and clinical screening.
 
-**Window A — local blockchain:**
+## References
 
-```powershell
-npm.cmd run chain
-```
-
-Leave it running. It prints development accounts and private keys. These are well-known *test keys*. They must never be used with real funds.
-
-**Window B — deploy and configure the web app:**
-
-```powershell
-npm.cmd run deploy
-npm.cmd run sync
-```
-
-`deploy` deliberately resets Ignition's **local deployment state** and deploys a fresh contract. `sync` copies its address to `web/src/deployment.json`. Do **not** run `smoke` before the filmed demo: that optional script already authorizes Account #1 and adds a donation, so it changes the clean starting state.
-
-**Window C — browser app:**
-
-```powershell
-npm.cmd run dev
-```
-
-Open the local URL Vite prints, usually `http://127.0.0.1:5173/`. The header should say **Local chain 31337: ready**. If it does not, see Troubleshooting below.
-
-## 4. Set up MetaMask with the Hardhat demo accounts
-
-Use the **same Chrome or Edge browser** for MetaMask and the app. If the fox icon is hidden, click the browser's **puzzle-piece Extensions icon**, then pin MetaMask. If MetaMask is absent, install it from [MetaMask's official instructions](https://support.metamask.io/start/getting-started-with-metamask/), then refresh the app.
-
-1. In **Window A**, find **Account #0** and its **Private Key**. Copy *only that development key*.
-2. In MetaMask, click the account selector at the top, then **Add wallet > Import an account**. Paste Account #0's private key and import it. Rename it **Bank A - Admin** if MetaMask offers a rename option.
-3. Repeat with Window A's **Account #1** private key. Name it **Bank B**. Account #2 is optional for the unauthorized-wallet demonstration.
-4. Select **Bank A - Admin** in MetaMask. In the app, click **Connect MetaMask**. Approve the connection. The app will ask MetaMask to add or switch to **Hardhat Local**, chain ID **31337**. Confirm that the RPC shown is `http://127.0.0.1:8545` and approve.
-5. The app's right-hand panel should now show **Administrator / Bank A** and its wallet address. If it does not, select the imported Account #0 in MetaMask and click **Connect MetaMask** again.
-
-If automatic network setup fails, add a [custom network manually](https://support.metamask.io/configure/networks/how-to-add-a-custom-network-rpc/): name **Hardhat Local**, RPC URL `http://127.0.0.1:8545`, chain ID `31337`, currency symbol `ETH`. Select it, then click **Connect MetaMask** in the app.
-
-If you close and restart Window A, its blockchain history is gone. Rerun **deploy** and **sync** in Window B, then refresh the browser. The same standard Hardhat development keys can stay imported in MetaMask.
-
-## 5. Run the complete demonstration
-
-Use only the invented codes generated by the app.
-
-1. In MetaMask select **Bank A - Admin (Account #0)** and click **Connect MetaMask** in the app.
-2. Click **Generate** and **Copy code**. Save this code temporarily for the demo.
-3. Click **Check interval**: the registry says no donation is recorded.
-4. Click **Record donation** and **Confirm** in MetaMask. Check again: the page shows **Waiting interval active**, the recording bank, and a transaction hash.
-5. With Account #0 still selected, click **Authorize** under **Manage a bank** and **Confirm** in MetaMask. Account #1's address is already filled in. If you ran `smoke` earlier, this account is already authorized; skip this step or redeploy for a clean demonstration.
-6. In MetaMask select **Bank B (Account #1)**. Click **Connect MetaMask** in the app again if needed. Keep the *same* fictional donor code in the field. Check interval: it sees Account #0's entry. Click **Record donation**: the contract rejects the early second record. MetaMask may show the rejection before offering a Confirm button, because it estimates that the transaction will fail.
-7. Optional: select imported **Account #2**, connect it, generate a **new** fictional code, and attempt to record it. The contract rejects it because Account #2 has no bank authorization.
-8. In a terminal, show `npm.cmd test`. One test advances the local clock to the allowed time and proves a later record succeeds. You do not need to wait 124 real days.
-
-
+- [National Blood Transfusion Service of Sri Lanka: donor guidance](https://nbts.health.gov.lk/donate-blood/)
+- [ICO: pseudonymisation guidance](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/data-sharing/anonymisation/pseudonymisation/)
+- [Hardhat documentation](https://hardhat.org/docs/getting-started)

@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 /// @title DonorInterval
-/// @notice A teaching prototype that checks a recorded whole-blood donation interval.
-/// @dev It does not assess medical eligibility. Use fictional donor codes only.
+/// @notice Records donation timestamps subject to bank authorization and a fixed interval.
+/// @dev Status returned by this contract does not assess medical eligibility.
 contract DonorInterval {
     // 124 days is a conservative fixed-day approximation of four calendar months.
     // It is a demonstration rule, not a substitute for current clinical guidance.

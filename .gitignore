@@ -8,3 +8,5 @@ types/
 ignition/deployments/
 .env
 *.log
+submission/
+presentation/rendered/
