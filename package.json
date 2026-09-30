@@ -1,0 +1,26 @@
+{
+  "name": "donor-interval",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "hardhat test",
+    "build:contracts": "hardhat build",
+    "chain": "hardhat node",
+    "deploy": "hardhat ignition deploy ignition/modules/DonorInterval.ts --network localhost --reset",
+    "sync": "node scripts/sync-deployment.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "dev": "vite web --host 127.0.0.1",
+    "build:web": "vite build web"
+  },
+  "dependencies": {
+    "ethers": "6.17.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox-mocha-ethers": "4.0.0",
+    "@types/node": "^22.0.0",
+    "hardhat": "3.18.0",
+    "typescript": "^5.9.3",
+    "vite": "8.3.1"
+  }
+}

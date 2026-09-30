@@ -1,0 +1,10 @@
+node_modules/
+.npm-cache/
+.chrome-check/
+artifacts/
+cache/
+dist/
+types/
+ignition/deployments/
+.env
+*.log
