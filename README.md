@@ -114,6 +114,8 @@ Save these screenshots or a short screen recording:
 - `8 passing` from the automated tests.
 - The contract deployment address or Hardhat transaction output.
 
+For a Windows screenshot, press **Windows + Shift + S**, drag around the website area, open Paint, press **Ctrl + V**, then **Ctrl + S** to save a PNG. For the successful record, keep the orange interval result and **Recorded history** visible. For the rejected attempt, use Bank B with the **same** fictional code and capture the page's **Record was not added** message. The error also stays in a toast for 30 seconds.
+
 The source code is in `contracts/`, `test/`, and `web/`. `node_modules/`, `.npm-cache/`, `web/dist/`, `cache/`, and `artifacts/` are generated files; exclude them if sharing a source ZIP.
 
 ## 7. Prepare the three-minute presentation

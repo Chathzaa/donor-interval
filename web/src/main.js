@@ -36,7 +36,7 @@ function showToast(message, kind = "success") {
   element.textContent = message;
   element.className = `toast visible ${kind}`;
   clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => { element.className = "toast"; }, 6000);
+  toastTimeout = setTimeout(() => { element.className = "toast"; }, kind === "error" ? 30000 : 6000);
 }
 
 function explainError(error) {
@@ -177,7 +177,11 @@ function onClick(id, action) {
   $(id).addEventListener("click", async () => {
     const button = $(id);
     button.disabled = true;
-    try { await action(); } catch (error) { showToast(explainError(error), "error"); }
+    try { await action(); } catch (error) {
+      const message = explainError(error);
+      showToast(message, "error");
+      if (id === "record") setResult("wait", "Record was not added", message);
+    }
     finally { button.disabled = false; }
   });
 }
