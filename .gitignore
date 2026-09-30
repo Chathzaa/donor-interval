@@ -10,3 +10,4 @@ ignition/deployments/
 *.log
 submission/
 presentation/rendered/
+presentation/
